@@ -5,6 +5,7 @@ from jose import jwt, JWTError
 
 REALM = os.getenv("KEYCLOAK_REALM", "reports-realm")
 KC_URL = os.getenv("KEYCLOAK_URL", "http://keycloak:8080")
+REQUIRED_ROLE = "prothetic_user" 
 
 
 @lru_cache(maxsize=1)
@@ -29,4 +30,12 @@ def get_current_user(authorization: str = Header(...)):
     except JWTError as e:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))
 
+    roles: list[str] = payload.get("realm_access", {}).get("roles", [])
+
+    if REQUIRED_ROLE not in roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User does not have required role",
+        )
+    
     return payload.get("preferred_username") or payload["sub"]
