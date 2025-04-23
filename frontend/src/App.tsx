@@ -12,9 +12,9 @@ const keycloakConfig: KeycloakConfig = {
 const keycloak = new Keycloak(keycloakConfig);
 
 const initOptions: Keycloak.KeycloakInitOptions = {
-  pkceMethod: 'S256',   // <-- Включаем PKCE
-  flow: 'standard',     // Authorization Code flow
-  onLoad: 'check-sso',  // или 'login-required'
+  pkceMethod: 'S256', 
+  flow: 'standard',
+  onLoad: 'check-sso',
   checkLoginIframe: false,
 };
 

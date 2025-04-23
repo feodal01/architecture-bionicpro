@@ -4,12 +4,11 @@ from typing import List
 from fastapi import FastAPI, Depends, HTTPException, status
 from pydantic import BaseModel
 
-from keycloak import get_current_user  # валидация токена
+from keycloak import get_current_user
 
 app = FastAPI(title="Reports API")
 
 
-# --------- Pydantic-модель ответа ----------
 class Report(BaseModel):
     id: str
     user: str
@@ -17,7 +16,6 @@ class Report(BaseModel):
     timestamp: dt.datetime
 
 
-# --------- генерация случайного отчёта -----
 def _make_report(user: str) -> Report:
     return Report(
         id=str(uuid.uuid4()),
@@ -27,15 +25,12 @@ def _make_report(user: str) -> Report:
     )
 
 
-# --------- сам эндпоинт --------------------
 @app.get("/reports", response_model=List[Report])
 def list_reports(
     count: int = 5,
-    user: str = Depends(get_current_user),   # снимаем юзера из JWT
+    user: str = Depends(get_current_user),
 ):
-    """
-    Возвращает `count` случайных отчётов для текущего пользователя.
-    """
+
     if count > 100:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
