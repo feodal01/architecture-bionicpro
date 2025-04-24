@@ -44,7 +44,7 @@ services:
   
   backend:
     build: 
-      context: ./backend
+      context: ./api
       dockerfile: Dockerfile
     environment:
       KEYCLOAK_URL: http://keycloak:8080
