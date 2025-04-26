@@ -16,6 +16,7 @@ const initOptions: Keycloak.KeycloakInitOptions = {
   flow: 'standard',
   onLoad: 'check-sso',
   checkLoginIframe: false,
+  enableLogging: true,
 };
 
 const App: React.FC = () => {
@@ -23,6 +24,12 @@ const App: React.FC = () => {
     <ReactKeycloakProvider 
       authClient={keycloak}
       initOptions={initOptions}
+      autoRefreshToken={true}
+      onEvent={(event, error) => {
+        if (event === 'onAuthError') {
+          console.error('Auth error:', error);
+        }
+      }}
     >
       <div className="App">
         <ReportPage />
