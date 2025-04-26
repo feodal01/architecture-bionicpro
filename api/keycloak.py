@@ -70,7 +70,7 @@ def get_current_user(authorization: str = Header(...)):
             )
         
         logger.debug(f"Successfully decoded token for user: {payload.get('preferred_username')}")
-        
+
         # Проверяем роли
         roles: list[str] = payload.get("realm_access", {}).get("roles", [])
         logger.debug(f"User roles: {roles}")

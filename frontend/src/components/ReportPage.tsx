@@ -33,7 +33,7 @@ const ReportPage: React.FC = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+      
       const data = await response.json();
       setReports(data);
     } catch (err) {
