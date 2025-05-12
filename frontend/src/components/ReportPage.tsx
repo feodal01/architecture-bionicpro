@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { useKeycloak } from '@react-keycloak/web';
 
+interface Report {
+  id: string;
+  user: string;
+  metric: number;
+  timestamp: string;
+}
+
 const ReportPage: React.FC = () => {
   const { keycloak, initialized } = useKeycloak();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reports, setReports] = useState<Report[]>([]);
 
   const downloadReport = async () => {
     if (!keycloak?.token) {
@@ -22,7 +30,12 @@ const ReportPage: React.FC = () => {
         }
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       
+      const data = await response.json();
+      setReports(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -65,6 +78,21 @@ const ReportPage: React.FC = () => {
         {error && (
           <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
             {error}
+          </div>
+        )}
+
+        {reports.length > 0 && (
+          <div className="mt-4">
+            <h2 className="text-xl font-semibold mb-2">Generated Reports:</h2>
+            <ul className="space-y-2">
+              {reports.map((report) => (
+                <li key={report.id} className="p-2 bg-gray-50 rounded">
+                  <p>User: {report.user}</p>
+                  <p>Metric: {report.metric}</p>
+                  <p>Timestamp: {new Date(report.timestamp).toLocaleString()}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>

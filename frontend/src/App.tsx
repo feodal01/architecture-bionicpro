@@ -11,9 +11,26 @@ const keycloakConfig: KeycloakConfig = {
 
 const keycloak = new Keycloak(keycloakConfig);
 
+const initOptions: Keycloak.KeycloakInitOptions = {
+  pkceMethod: 'S256', 
+  flow: 'standard',
+  onLoad: 'check-sso',
+  checkLoginIframe: false,
+  enableLogging: true,
+};
+
 const App: React.FC = () => {
   return (
-    <ReactKeycloakProvider authClient={keycloak}>
+    <ReactKeycloakProvider 
+      authClient={keycloak}
+      initOptions={initOptions}
+      autoRefreshToken={true}
+      onEvent={(event, error) => {
+        if (event === 'onAuthError') {
+          console.error('Auth error:', error);
+        }
+      }}
+    >
       <div className="App">
         <ReportPage />
       </div>
